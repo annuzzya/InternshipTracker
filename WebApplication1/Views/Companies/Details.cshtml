@@ -1,0 +1,53 @@
+@model WebApplication1.Models.Company
+
+@{
+    ViewData["Title"] = "Деталі компанії";
+    // Дістаємо наші вакансії з ViewBag
+    var vacancies = ViewBag.Vacancies as IEnumerable<WebApplication1.Models.Vacancy>;
+}
+
+<h1>@Model.Name</h1>
+<hr />
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <p><strong>Сайт:</strong> @Model.Website</p>
+        <p><strong>Локація:</strong> @Model.Location</p>
+    </div>
+</div>
+
+<h3>Вакансії цієї компанії</h3>
+<p>
+    <a asp-controller="Vacancies" asp-action="Create" class="btn btn-success btn-sm">Додати нову вакансію</a>
+</p>
+
+@if (vacancies != null && vacancies.Any())
+{
+    <table class="table table-bordered">
+        <thead class="table-light">
+        <tr>
+            <th>Назва вакансії</th>
+            <th>Зарплата</th>
+            <th>Валюта</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in vacancies)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.SalaryMin - @item.SalaryMax</td>
+                <td>@item.Currency</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning">У цієї компанії поки немає відкритих вакансій.</div>
+}
+
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">Повернутися до списку компаній</a>
+</div>

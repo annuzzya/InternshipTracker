@@ -1,0 +1,31 @@
+@model IEnumerable<WebApplication1.Models.User>
+
+@{
+    ViewData["Title"] = "Користувачі";
+}
+
+<h1>Список користувачів</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Додати користувача</a>
+</p>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>ПІБ</th>
+        <th>Email</th>
+        <th>Роль</th>
+        <th>ID Компанії</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>@item.FullName</td>
+            <td>@item.Email</td>
+            <td>@item.Role</td>
+            <td>@item.CompanyId</td>
+        </tr>
+    }
+    </tbody>
+</table>

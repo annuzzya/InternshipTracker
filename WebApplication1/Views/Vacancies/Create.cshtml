@@ -1,0 +1,50 @@
+@model WebApplication1.Models.Vacancy
+
+@{
+    ViewData["Title"] = "Створити";
+}
+
+<h1>Додати вакансію</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div class="form-group mb-3">
+                <label class="control-label">Назва вакансії</label>
+                <input asp-for="Title" class="form-control" required />
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">ID Компанії (CompanyId)</label>
+                <input asp-for="CompanyId" class="form-control" required />
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">ID Автора (AuthorId)</label>
+                <input asp-for="AuthorId" class="form-control" required />
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">ID Статусу (StatusId)</label>
+                <input asp-for="StatusId" class="form-control" required type="number" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">Мін. зарплата</label>
+                <input asp-for="SalaryMin" class="form-control" type="number" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">Макс. зарплата</label>
+                <input asp-for="SalaryMax" class="form-control" type="number" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">Валюта</label>
+                <input asp-for="Currency" class="form-control" value="USD" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">Посилання</label>
+                <input asp-for="Link" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Зберегти" class="btn btn-success" />
+                <a asp-action="Index" class="btn btn-secondary">Повернутися</a>
+            </div>
+        </form>
+    </div>
+</div>

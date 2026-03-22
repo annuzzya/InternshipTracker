@@ -1,0 +1,31 @@
+@model IEnumerable<WebApplication1.Models.Vacancy>
+
+@{
+    ViewData["Title"] = "Вакансії";
+}
+
+<h1>Список вакансій</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Додати нову вакансію</a>
+</p>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Назва</th>
+        <th>Зарплата (Мін - Макс)</th>
+        <th>Валюта</th>
+        <th>Посилання</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>@item.Title</td>
+            <td>@item.SalaryMin - @item.SalaryMax</td>
+            <td>@item.Currency</td>
+            <td>@item.Link</td>
+        </tr>
+    }
+    </tbody>
+</table>
