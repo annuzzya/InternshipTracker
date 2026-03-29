@@ -1,0 +1,16 @@
+@model WebApplication1.Models.Vacancy
+@{ ViewData["Title"] = "Деталі вакансії"; }
+
+<h1>@Model.Title</h1>
+<hr />
+<dl class="row">
+    <dt class="col-sm-3">Зарплата</dt>
+    <dd class="col-sm-9">@Model.SalaryMin - @Model.SalaryMax @Model.Currency</dd>
+    
+    <dt class="col-sm-3">Посилання</dt>
+    <dd class="col-sm-9"><a href="@Model.Link" target="_blank">@Model.Link</a></dd>
+</dl>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Редагувати</a>
+    <a asp-action="Index" class="btn btn-secondary">Повернутися до списку</a>
+</div>

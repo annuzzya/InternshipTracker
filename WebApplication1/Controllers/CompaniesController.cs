@@ -81,4 +81,31 @@ public class CompaniesController : Controller
         }
         return RedirectToAction(nameof(Index));
     }
+    // 1. Відкриває сторінку редагування і завантажує туди старі дані
+    public async Task<IActionResult> Edit(Guid? id)
+    {
+        if (id == null) return NotFound();
+
+        var company = await _context.Companies.FindAsync(id);
+        if (company == null) return NotFound();
+        
+        return View(company);
+    }
+
+    // 2. Зберігає нові дані, які ти ввела
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(Guid id, Company company)
+    {
+        // Перевіряємо, чи не підмінили ID
+        if (id != company.Id) return NotFound();
+
+        if (ModelState.IsValid)
+        {
+            _context.Update(company);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index)); // Повертаємось до списку
+        }
+        return View(company);
+    }
 }

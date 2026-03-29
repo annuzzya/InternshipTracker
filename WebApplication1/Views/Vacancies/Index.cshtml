@@ -16,7 +16,7 @@
         <th>Зарплата (Мін - Макс)</th>
         <th>Валюта</th>
         <th>Посилання</th>
-    </tr>
+        <th>Дії</th> </tr>
     </thead>
     <tbody>
     @foreach (var item in Model) {
@@ -25,6 +25,11 @@
             <td>@item.SalaryMin - @item.SalaryMax</td>
             <td>@item.Currency</td>
             <td>@item.Link</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Деталі</a>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Редагувати</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Видалити</a>
+            </td>
         </tr>
     }
     </tbody>

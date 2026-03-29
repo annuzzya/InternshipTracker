@@ -1,14 +1,14 @@
 @model WebApplication1.Models.User
+@{ ViewData["Title"] = "Редагувати користувача"; }
 
-@{
-    ViewData["Title"] = "Створити";
-}
-
-<h1>Додати користувача</h1>
+<h1>Редагувати користувача</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CreatedAt" /> 
+            
             <div class="form-group mb-3">
                 <label class="control-label">Email</label>
                 <input asp-for="Email" class="form-control" required type="email" />
@@ -19,18 +19,17 @@
             </div>
             <div class="form-group mb-3">
                 <label class="control-label">Роль</label>
-                <input asp-for="Role" class="form-control" required placeholder="Student, Recruiter або Mentor" />
+                <input asp-for="Role" class="form-control" required />
             </div>
-            
             <div class="form-group mb-3">
                 <label class="control-label">Компанія</label>
                 <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId">
-                    <option value="">Без компанії (опціонально)</option>
+                    <option value="">-- Без компанії (опціонально) --</option>
                 </select>
             </div>
             <div class="form-group">
-                <input type="submit" value="Зберегти" class="btn btn-success" />
-                <a asp-action="Index" class="btn btn-secondary">Повернутися</a>
+                <input type="submit" value="Зберегти зміни" class="btn btn-warning" />
+                <a asp-action="Index" class="btn btn-secondary">Скасувати</a>
             </div>
         </form>
     </div>
