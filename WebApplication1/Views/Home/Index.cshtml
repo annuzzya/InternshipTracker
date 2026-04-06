@@ -1,47 +1,93 @@
-﻿@{
-    ViewData["Title"] = "Головна";
-}
+﻿@{ ViewData["Title"] = "Головна - Дашборд"; }
 
-<div class="text-center py-5">
-    <h1 class="display-4 fw-bolder text-dark mb-3">Знайди своє перше <span class="text-primary">IT-стажування</span></h1>
-    <p class="lead text-muted mb-5">Платформа, яка з'єднує амбітних студентів та топові технологічні компанії України.</p>
-    
-    <div class="d-flex justify-content-center gap-3 mb-5">
-        <a asp-controller="Vacancies" asp-action="Index" class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm">
-            <i class="bi bi-search me-2"></i> Знайти вакансію
-        </a>
-        <a asp-controller="Companies" asp-action="Index" class="btn btn-outline-secondary btn-lg px-5 rounded-pill border-2">
-            <i class="bi bi-buildings me-2"></i> Наші партнери
-        </a>
+<div class="container-fluid px-4 mt-4">
+    <div class="d-flex align-items-center mb-4 pb-2 border-bottom">
+        <i class="bi bi-speedometer2 fs-2 text-primary me-3"></i>
+        <h2 class="fw-bold m-0 text-dark">Аналітичний дашборд</h2>
     </div>
 
-    <div class="row mt-5 pt-4 text-start border-top">
-        <div class="col-md-4 mb-4">
-            <div class="d-flex align-items-center mb-3">
-                <div class="bg-primary text-white rounded-circle p-3 me-3 d-flex justify-content-center align-items-center" style="width: 50px; height: 50px;">
-                    <i class="bi bi-briefcase-fill fs-5"></i>
+    <div class="row g-4 mb-5">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Вакансії за компаніями</h5>
+                    <div id="vacanciesChart" style="height: 350px; width: 100%;">
+                        <div class="d-flex justify-content-center align-items-center h-100 text-muted">
+                            <div class="spinner-border text-primary me-2" role="status"></div> Завантаження...
+                        </div>
+                    </div>
                 </div>
-                <h5 class="fw-bold mb-0">Реальний досвід</h5>
             </div>
-            <p class="text-muted">Працюй над реальними проєктами, а не абстрактними задачами.</p>
         </div>
-        <div class="col-md-4 mb-4">
-            <div class="d-flex align-items-center mb-3">
-                <div class="bg-success text-white rounded-circle p-3 me-3 d-flex justify-content-center align-items-center" style="width: 50px; height: 50px;">
-                    <i class="bi bi-cash-stack fs-5"></i>
+
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Користувачі за ролями</h5>
+                    <div id="usersChart" style="height: 350px; width: 100%;">
+                        </div>
                 </div>
-                <h5 class="fw-bold mb-0">Оплата праці</h5>
             </div>
-            <p class="text-muted">Більшість партнерів пропонують компенсацію з першого дня.</p>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="d-flex align-items-center mb-3">
-                <div class="bg-info text-white rounded-circle p-3 me-3 d-flex justify-content-center align-items-center" style="width: 50px; height: 50px;">
-                    <i class="bi bi-rocket-takeoff fs-5"></i>
-                </div>
-                <h5 class="fw-bold mb-0">Швидкий старт</h5>
-            </div>
-            <p class="text-muted">Менторська підтримка та гарантоване професійне зростання.</p>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        // Завантажуємо бібліотеку
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            
+            // --- ГРАФІК 1: Стовпчаста діаграма (Вакансії) ---
+            fetch('/api/charts/vacanciesByCompany')
+                .then(response => response.json())
+                .then(data => {
+                    const dataTable = new google.visualization.DataTable();
+                    dataTable.addColumn('string', 'Компанія');
+                    dataTable.addColumn('number', 'Кількість вакансій');
+
+                    // ASP.NET автоматично перетворює назви властивостей в camelCase (companyName, count)
+                    data.forEach(item => {
+                        dataTable.addRow([item.companyName, item.count]);
+                    });
+
+                    const options = {
+                        colors: ['#0d6efd'], // Синій колір
+                        legend: { position: 'none' },
+                        chartArea: { width: '85%', height: '75%' },
+                        animation: { startup: true, duration: 1000, easing: 'out' } // Анімація появи
+                    };
+
+                    const chart = new google.visualization.ColumnChart(document.getElementById('vacanciesChart'));
+                    chart.draw(dataTable, options);
+                });
+
+            // --- ГРАФІК 2: Кільцева діаграма (Ролі) ---
+            fetch('/api/charts/usersByRole')
+                .then(response => response.json())
+                .then(data => {
+                    const dataTable = new google.visualization.DataTable();
+                    dataTable.addColumn('string', 'Роль');
+                    dataTable.addColumn('number', 'Кількість');
+
+                    data.forEach(item => {
+                        dataTable.addRow([item.role, item.count]);
+                    });
+
+                    const options = {
+                        pieHole: 0.4, // Робить діаграму кільцевою (бублик)
+                        colors: ['#ffc107', '#198754', '#0dcaf0', '#6c757d'], // Фірмові кольори Bootstrap
+                        chartArea: { width: '90%', height: '80%' },
+                        legend: { position: 'bottom' },
+                        animation: { startup: true, duration: 1000, easing: 'out' }
+                    };
+
+                    const chart = new google.visualization.PieChart(document.getElementById('usersChart'));
+                    chart.draw(dataTable, options);
+                });
+        }
+    </script>
+}

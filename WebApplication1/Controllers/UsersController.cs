@@ -16,24 +16,28 @@ public class UsersController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string searchString)
     {
-        return View(await _context.Users.ToListAsync());
+        ViewData["CurrentFilter"] = searchString;
+        var users = from u in _context.Users select u;
+
+        if (!String.IsNullOrEmpty(searchString))
+        {
+            users = users.Where(s => s.FullName.Contains(searchString));
+        }
+        return View(await users.ToListAsync());
     }
 
-    // 1. Відкриває сторінку і передає список компаній
     public IActionResult Create()
     {
         ViewBag.CompanyId = new SelectList(_context.Companies, "Id", "Name");
         return View();
     }
 
-    // 2. Зберігає користувача
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(User user)
     {
-        // Додаємо і сюди на всякий випадок, щоб і створення працювало ідеально
         ModelState.Remove("Company"); 
 
         if (ModelState.IsValid)
@@ -43,45 +47,48 @@ public class UsersController : Controller
             return RedirectToAction(nameof(Index));
         }
         
-        // Якщо помилка (наприклад, пусте поле), список треба завантажити знову
         ViewBag.CompanyId = new SelectList(_context.Companies, "Id", "Name", user.CompanyId);
         return View(user);
     }
     
-    // --- ДЕТАЛІ ---
     public async Task<IActionResult> Details(Guid? id)
     {
-        if (id == null) return NotFound();
+        if (id is null) return NotFound();
         var user = await _context.Users.FindAsync(id);
-        if (user == null) return NotFound();
+        if (user is null) return NotFound();
         return View(user);
     }
 
-    // --- РЕДАГУВАННЯ (Відкрити сторінку) ---
     public async Task<IActionResult> Edit(Guid? id)
     {
-        if (id == null) return NotFound();
+        if (id is null) return NotFound();
         var user = await _context.Users.FindAsync(id);
-        if (user == null) return NotFound();
+        if (user is null) return NotFound();
 
-        // Передаємо список компаній (як при створенні)
         ViewBag.CompanyId = new SelectList(_context.Companies, "Id", "Name", user.CompanyId);
         return View(user);
     }
 
-    // --- РЕДАГУВАННЯ (Зберегти зміни) ---
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Guid id, User user)
     {
         if (id != user.Id) return NotFound();
 
-        // ОСЬ ЦЕЙ РЯДОК, який рятує нас від помилки збереження:
+        // 1. Знаходимо в базі
+        var existingUser = await _context.Users.FindAsync(id);
+        if (existingUser is null) return NotFound();
+
         ModelState.Remove("Company");
 
         if (ModelState.IsValid)
         {
-            _context.Update(user);
+            // 2. Оновлюємо ТІЛЬКИ безпечні поля
+            existingUser.FullName = user.FullName;
+            existingUser.Email = user.Email;
+            existingUser.Role = user.Role;
+            existingUser.CompanyId = user.CompanyId;
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -90,22 +97,20 @@ public class UsersController : Controller
         return View(user);
     }
 
-    // --- ВИДАЛЕННЯ (Відкрити сторінку підтвердження) ---
     public async Task<IActionResult> Delete(Guid? id)
     {
-        if (id == null) return NotFound();
+        if (id is null) return NotFound();
         var user = await _context.Users.FindAsync(id);
-        if (user == null) return NotFound();
+        if (user is null) return NotFound();
         return View(user);
     }
 
-    // --- ВИДАЛЕННЯ (Підтвердити і видалити) ---
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
         var user = await _context.Users.FindAsync(id);
-        if (user != null)
+        if (user is not null)
         {
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();

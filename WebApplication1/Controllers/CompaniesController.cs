@@ -14,37 +14,23 @@ public class CompaniesController : Controller
         _context = context;
     }
 
-    // Показує список всіх компаній
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string searchString)
     {
-        return View(await _context.Companies.ToListAsync());
-    }
-    
-    // Відкриває сторінку деталей компанії та її вакансії
-    public async Task<IActionResult> Details(Guid? id)
-    {
-        if (id == null) return NotFound();
+        ViewData["CurrentFilter"] = searchString;
+        var companies = from c in _context.Companies select c;
 
-        // 1. Шукаємо саму компанію
-        var company = await _context.Companies.FirstOrDefaultAsync(m => m.Id == id);
-        if (company == null) return NotFound();
-
-        // 2. Шукаємо всі вакансії, які належать цій компанії (по CompanyId)
-        // Передаємо їх на сторінку через спеціальну "сумку" ViewBag
-        ViewBag.Vacancies = await _context.Vacancies
-            .Where(v => v.CompanyId == id)
-            .ToListAsync();
-
-        return View(company); // Віддаємо компанію на сторінку
+        if (!String.IsNullOrEmpty(searchString))
+        {
+            companies = companies.Where(s => s.Name.Contains(searchString));
+        }
+        return View(await companies.ToListAsync());
     }
 
-    // Відкриває сторінку створення
     public IActionResult Create()
     {
         return View();
     }
 
-    // Зберігає нову компанію в базу даних
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Company company)
@@ -53,59 +39,66 @@ public class CompaniesController : Controller
         {
             _context.Add(company);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index)); // Повертає до списку
+            return RedirectToAction(nameof(Index)); 
         }
         return View(company);
     }
-    // 1. Відкриває сторінку з питанням "Ви впевнені?"
-    public async Task<IActionResult> Delete(Guid? id)
+
+    public async Task<IActionResult> Details(Guid? id)
     {
-        if (id == null) return NotFound();
-
-        var company = await _context.Companies.FirstOrDefaultAsync(m => m.Id == id);
-        if (company == null) return NotFound();
-
+        if (id is null) return NotFound();
+        var company = await _context.Companies.FindAsync(id);
+        if (company is null) return NotFound();
         return View(company);
     }
 
-    // 2. Кнопка підтвердження, яка РЕАЛЬНО видаляє з бази
+    public async Task<IActionResult> Edit(Guid? id)
+    {
+        if (id is null) return NotFound();
+        var company = await _context.Companies.FindAsync(id);
+        if (company is null) return NotFound();
+        return View(company);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(Guid id, Company company)
+    {
+        if (id != company.Id) return NotFound();
+
+        var existingCompany = await _context.Companies.FindAsync(id);
+        if (existingCompany is null) return NotFound();
+
+        if (ModelState.IsValid)
+        {
+            existingCompany.Name = company.Name;
+            existingCompany.Website = company.Website;
+            existingCompany.Location = company.Location;
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index)); 
+        }
+        return View(company);
+    }
+
+    public async Task<IActionResult> Delete(Guid? id)
+    {
+        if (id is null) return NotFound();
+        var company = await _context.Companies.FindAsync(id);
+        if (company is null) return NotFound();
+        return View(company);
+    }
+
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
         var company = await _context.Companies.FindAsync(id);
-        if (company != null)
+        if (company is not null)
         {
             _context.Companies.Remove(company);
-            await _context.SaveChangesAsync(); // Зберігаємо зміни в базі
+            await _context.SaveChangesAsync();
         }
         return RedirectToAction(nameof(Index));
-    }
-    // 1. Відкриває сторінку редагування і завантажує туди старі дані
-    public async Task<IActionResult> Edit(Guid? id)
-    {
-        if (id == null) return NotFound();
-
-        var company = await _context.Companies.FindAsync(id);
-        if (company == null) return NotFound();
-        
-        return View(company);
-    }
-
-    // 2. Зберігає нові дані, які ти ввела
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(Guid id, Company company)
-    {
-        // Перевіряємо, чи не підмінили ID
-        if (id != company.Id) return NotFound();
-
-        if (ModelState.IsValid)
-        {
-            _context.Update(company);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index)); // Повертаємось до списку
-        }
-        return View(company);
     }
 }
