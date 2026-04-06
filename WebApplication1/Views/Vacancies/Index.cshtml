@@ -1,36 +1,69 @@
 @model IEnumerable<WebApplication1.Models.Vacancy>
+@{ ViewData["Title"] = "Вакансії"; }
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3 border-bottom gap-3">
+    <h2 class="fw-bold m-0 text-dark"><i class="bi bi-briefcase text-primary me-2"></i> Список вакансій</h2>
+    
+    <div class="d-flex flex-column flex-sm-row gap-3 align-items-sm-center">
+        <form asp-action="Index" method="get" class="m-0">
+            <div class="input-group input-group-sm shadow-sm rounded-pill overflow-hidden border">
+                <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control border-0 bg-light px-3 py-2" placeholder="Пошук за назвою..." style="min-width: 220px;">
+                <button type="submit" class="btn btn-light border-0 bg-light px-3"><i class="bi bi-search text-muted"></i></button>
+                @if (ViewData["CurrentFilter"] != null) {
+                    <a asp-action="Index" class="btn btn-light border-0 bg-light px-3 text-danger" title="Скинути пошук"><i class="bi bi-x-lg"></i></a>
+                }
+            </div>
+        </form>
+        
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm text-nowrap">
+            <i class="bi bi-plus-circle me-1"></i> Додати вакансію
+        </a>
+    </div>
+</div>
 
-@{
-    ViewData["Title"] = "Вакансії";
-}
-
-<h1>Список вакансій</h1>
-
-<p>
-    <a asp-action="Create" class="btn btn-primary">Додати нову вакансію</a>
-</p>
-<table class="table table-striped">
-    <thead>
-    <tr>
-        <th>Назва</th>
-        <th>Зарплата (Мін - Макс)</th>
-        <th>Валюта</th>
-        <th>Посилання</th>
-        <th>Дії</th> </tr>
-    </thead>
-    <tbody>
+<div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+    <table class="table table-hover mb-0 align-middle">
+        <thead class="table-light">
+            <tr>
+                <th class="ps-4">Назва</th>
+                <th>Зарплата</th>
+                <th>Статус</th>
+                <th class="text-end pe-4">Дії</th>
+            </tr>
+        </thead>
+        <tbody>
     @foreach (var item in Model) {
-        <tr>
-            <td>@item.Title</td>
-            <td>@item.SalaryMin - @item.SalaryMax</td>
-            <td>@item.Currency</td>
-            <td>@item.Link</td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Деталі</a>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Редагувати</a>
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Видалити</a>
-            </td>
-        </tr>
+            <tr>
+                <td class="fw-bold text-primary ps-4">@item.Title</td>
+                <td>
+                    <span class="badge bg-light text-dark border px-2 py-1">
+                        <i class="bi bi-cash text-success me-1"></i> @(item.SalaryMin != null ? $"{item.SalaryMin} - {item.SalaryMax} {item.Currency}" : "Не вказано")
+                    </span>
+                </td>
+                <td>
+                    @if(item.StatusId == 1) { <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3">Відкрита</span> }
+                    else if (item.StatusId == 2) { <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-3">Закрита</span> }
+                    else { <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-3">Чернетка</span> }
+                </td>
+                <td class="text-end pe-4">
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-primary" title="Деталі">
+                            <i class="bi bi-eye fs-5"></i>
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-warning" title="Редагувати">
+                            <i class="bi bi-pencil fs-5"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-danger" title="Видалити">
+                            <i class="bi bi-trash fs-5"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
     }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important; background-color: #fff !important; }
+</style>

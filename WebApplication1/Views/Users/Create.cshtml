@@ -1,37 +1,50 @@
 @model WebApplication1.Models.User
+@{ ViewData["Title"] = "Додати користувача"; }
 
-@{
-    ViewData["Title"] = "Створити";
-}
-
-<h1>Додати користувача</h1>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div class="form-group mb-3">
-                <label class="control-label">Email</label>
-                <input asp-for="Email" class="form-control" required type="email" />
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="bg-success-subtle text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="bi bi-person-plus-fill fs-3"></i>
+                    </div>
+                    <h3 class="fw-bold">Реєстрація користувача</h3>
+                </div>
+                
+                <form asp-action="Create">
+                    <div class="form-group mb-3">
+                        <label class="control-label fw-bold text-muted small mb-1">ПІБ</label>
+                        <input asp-for="FullName" class="form-control form-control-lg bg-light border-0" required placeholder="Іван Іваненко" />
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label class="control-label fw-bold text-muted small mb-1">Email</label>
+                        <input asp-for="Email" class="form-control form-control-lg bg-light border-0" required type="email" placeholder="ivan@example.com" />
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label class="control-label fw-bold text-muted small mb-1">Роль</label>
+                        <select asp-for="Role" class="form-select form-select-lg bg-light border-0" required>
+                            <option value="Student">Student (Студент)</option>
+                            <option value="Recruiter">Recruiter (Рекрутер)</option>
+                            <option value="Mentor">Mentor (Ментор)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label class="control-label fw-bold text-muted small mb-1">Прив'язка до компанії</label>
+                        <select asp-for="CompanyId" class="form-select form-select-lg bg-light border-0" asp-items="ViewBag.CompanyId">
+                            <option value="">Без компанії (опціонально)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="d-flex gap-3 mt-4">
+                        <button type="submit" class="btn btn-success btn-lg w-50 fw-bold shadow-sm"><i class="bi bi-check-lg me-1"></i> Створити</button>
+                        <a asp-action="Index" class="btn btn-light btn-lg w-50 fw-bold border">Скасувати</a>
+                    </div>
+                </form>
             </div>
-            <div class="form-group mb-3">
-                <label class="control-label">ПІБ</label>
-                <input asp-for="FullName" class="form-control" required />
-            </div>
-            <div class="form-group mb-3">
-                <label class="control-label">Роль</label>
-                <input asp-for="Role" class="form-control" required placeholder="Student, Recruiter або Mentor" />
-            </div>
-            
-            <div class="form-group mb-3">
-                <label class="control-label">Компанія</label>
-                <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId">
-                    <option value="">Без компанії (опціонально)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Зберегти" class="btn btn-success" />
-                <a asp-action="Index" class="btn btn-secondary">Повернутися</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>

@@ -21,7 +21,7 @@ public class UsersController : Controller
         return View(await _context.Users.ToListAsync());
     }
 
-// 1. Відкриває сторінку і передає список компаній
+    // 1. Відкриває сторінку і передає список компаній
     public IActionResult Create()
     {
         ViewBag.CompanyId = new SelectList(_context.Companies, "Id", "Name");
@@ -33,6 +33,9 @@ public class UsersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(User user)
     {
+        // Додаємо і сюди на всякий випадок, щоб і створення працювало ідеально
+        ModelState.Remove("Company"); 
+
         if (ModelState.IsValid)
         {
             _context.Add(user);
@@ -44,6 +47,7 @@ public class UsersController : Controller
         ViewBag.CompanyId = new SelectList(_context.Companies, "Id", "Name", user.CompanyId);
         return View(user);
     }
+    
     // --- ДЕТАЛІ ---
     public async Task<IActionResult> Details(Guid? id)
     {
@@ -71,6 +75,9 @@ public class UsersController : Controller
     public async Task<IActionResult> Edit(Guid id, User user)
     {
         if (id != user.Id) return NotFound();
+
+        // ОСЬ ЦЕЙ РЯДОК, який рятує нас від помилки збереження:
+        ModelState.Remove("Company");
 
         if (ModelState.IsValid)
         {

@@ -16,9 +16,20 @@ public class VacanciesController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string searchString)
     {
-        return View(await _context.Vacancies.ToListAsync());
+        // Зберігаємо запит, щоб вставити його назад у рядок пошуку на сторінці
+        ViewData["CurrentFilter"] = searchString;
+
+        var vacancies = from v in _context.Vacancies select v;
+
+        // Якщо рядок пошуку не пустий - шукаємо по назві (Title)
+        if (!String.IsNullOrEmpty(searchString))
+        {
+            vacancies = vacancies.Where(s => s.Title.Contains(searchString));
+        }
+
+        return View(await vacancies.ToListAsync());
     }
 
     // 1. Відкриває сторінку і передає списки компаній та юзерів
@@ -34,6 +45,11 @@ public class VacanciesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Vacancy vacancy)
     {
+        // Ігноруємо навігаційні властивості при валідації
+        ModelState.Remove("Company");
+        ModelState.Remove("Author");
+        ModelState.Remove("Status");
+
         if (ModelState.IsValid)
         {
             _context.Add(vacancy);
@@ -46,6 +62,7 @@ public class VacanciesController : Controller
         ViewBag.AuthorId = new SelectList(_context.Users, "Id", "FullName", vacancy.AuthorId);
         return View(vacancy);
     }
+    
     // --- ДЕТАЛІ ---
     public async Task<IActionResult> Details(Guid? id)
     {
@@ -80,10 +97,23 @@ public class VacanciesController : Controller
     {
         if (id != vacancy.Id) return NotFound();
 
+        // Ігноруємо навігаційні властивості при валідації
+        ModelState.Remove("Company");
+        ModelState.Remove("Author");
+        ModelState.Remove("Status");
+
         if (ModelState.IsValid)
         {
-            _context.Update(vacancy);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Update(vacancy);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!VacancyExists(vacancy.Id)) return NotFound();
+                else throw;
+            }
             return RedirectToAction(nameof(Index));
         }
         
@@ -119,5 +149,11 @@ public class VacanciesController : Controller
             await _context.SaveChangesAsync();
         }
         return RedirectToAction(nameof(Index));
+    }
+
+    // Допоміжний метод для перевірки існування
+    private bool VacancyExists(Guid id)
+    {
+        return _context.Vacancies.Any(e => e.Id == id);
     }
 }

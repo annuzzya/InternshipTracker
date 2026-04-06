@@ -1,8 +1,47 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Головна";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center py-5">
+    <h1 class="display-4 fw-bolder text-dark mb-3">Знайди своє перше <span class="text-primary">IT-стажування</span></h1>
+    <p class="lead text-muted mb-5">Платформа, яка з'єднує амбітних студентів та топові технологічні компанії України.</p>
+    
+    <div class="d-flex justify-content-center gap-3 mb-5">
+        <a asp-controller="Vacancies" asp-action="Index" class="btn btn-primary btn-lg px-5 rounded-pill shadow-sm">
+            <i class="bi bi-search me-2"></i> Знайти вакансію
+        </a>
+        <a asp-controller="Companies" asp-action="Index" class="btn btn-outline-secondary btn-lg px-5 rounded-pill border-2">
+            <i class="bi bi-buildings me-2"></i> Наші партнери
+        </a>
+    </div>
+
+    <div class="row mt-5 pt-4 text-start border-top">
+        <div class="col-md-4 mb-4">
+            <div class="d-flex align-items-center mb-3">
+                <div class="bg-primary text-white rounded-circle p-3 me-3 d-flex justify-content-center align-items-center" style="width: 50px; height: 50px;">
+                    <i class="bi bi-briefcase-fill fs-5"></i>
+                </div>
+                <h5 class="fw-bold mb-0">Реальний досвід</h5>
+            </div>
+            <p class="text-muted">Працюй над реальними проєктами, а не абстрактними задачами.</p>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="d-flex align-items-center mb-3">
+                <div class="bg-success text-white rounded-circle p-3 me-3 d-flex justify-content-center align-items-center" style="width: 50px; height: 50px;">
+                    <i class="bi bi-cash-stack fs-5"></i>
+                </div>
+                <h5 class="fw-bold mb-0">Оплата праці</h5>
+            </div>
+            <p class="text-muted">Більшість партнерів пропонують компенсацію з першого дня.</p>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="d-flex align-items-center mb-3">
+                <div class="bg-info text-white rounded-circle p-3 me-3 d-flex justify-content-center align-items-center" style="width: 50px; height: 50px;">
+                    <i class="bi bi-rocket-takeoff fs-5"></i>
+                </div>
+                <h5 class="fw-bold mb-0">Швидкий старт</h5>
+            </div>
+            <p class="text-muted">Менторська підтримка та гарантоване професійне зростання.</p>
+        </div>
+    </div>
 </div>
