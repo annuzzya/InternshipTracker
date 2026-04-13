@@ -10,8 +10,8 @@
         <div class="col-lg-7">
             <div class="card shadow-sm border-0 rounded-4 h-100">
                 <div class="card-body p-4">
-                    <h5 class="fw-bold mb-3 border-bottom pb-2">Вакансії за компаніями</h5>
-                    <div id="vacanciesChart" style="height: 350px; width: 100%;">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Кількість вакансій для тайтлу</h5>
+                    <div id="seniorityChart" style="height: 350px; width: 100%;">
                         <div class="d-flex justify-content-center align-items-center h-100 text-muted">
                             <div class="spinner-border text-primary me-2" role="status"></div> Завантаження...
                         </div>
@@ -23,9 +23,12 @@
         <div class="col-lg-5">
             <div class="card shadow-sm border-0 rounded-4 h-100">
                 <div class="card-body p-4">
-                    <h5 class="fw-bold mb-3 border-bottom pb-2">Користувачі за ролями</h5>
-                    <div id="usersChart" style="height: 350px; width: 100%;">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Рівень зарплат на платформі</h5>
+                    <div id="salaryChart" style="height: 350px; width: 100%;">
+                        <div class="d-flex justify-content-center align-items-center h-100 text-muted">
+                            <div class="spinner-border text-primary me-2" role="status"></div> Завантаження...
                         </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -35,57 +38,78 @@
 @section Scripts {
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        // Завантажуємо бібліотеку
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawCharts);
 
         function drawCharts() {
             
-            // --- ГРАФІК 1: Стовпчаста діаграма (Вакансії) ---
-            fetch('/api/charts/vacanciesByCompany')
+            // --- ГРАФІК 1: Плавний графік вакансій за Тайтлом ---
+            fetch('/api/charts/vacanciesBySeniority')
                 .then(response => response.json())
                 .then(data => {
                     const dataTable = new google.visualization.DataTable();
-                    dataTable.addColumn('string', 'Компанія');
+                    dataTable.addColumn('string', 'Тайтл');
                     dataTable.addColumn('number', 'Кількість вакансій');
 
-                    // ASP.NET автоматично перетворює назви властивостей в camelCase (companyName, count)
                     data.forEach(item => {
-                        dataTable.addRow([item.companyName, item.count]);
+                        dataTable.addRow([item.title, item.count]);
                     });
 
                     const options = {
-                        colors: ['#0d6efd'], // Синій колір
-                        legend: { position: 'none' },
-                        chartArea: { width: '85%', height: '75%' },
-                        animation: { startup: true, duration: 1000, easing: 'out' } // Анімація появи
+                        colors: ['#28a745'],
+                        areaOpacity: 0.15, 
+                        curveType: 'function',
+                        legend: { position: 'none' }, 
+                        chartArea: { width: '85%', height: '70%' },
+                        pointSize: 5,       
+                        animation: { startup: true, duration: 1200, easing: 'out' },
+                        hAxis: { 
+                            textStyle: { color: '#6c757d', fontSize: 11 },
+                            slantedText: true, slantedTextAngle: 45 
+                        },
+                        vAxis: { 
+                            textStyle: { color: '#6c757d' }, 
+                            gridlines: { color: '#f8f9fa' }, 
+                            baselineColor: '#dee2e6' 
+                        }
                     };
 
-                    const chart = new google.visualization.ColumnChart(document.getElementById('vacanciesChart'));
+                    const chart = new google.visualization.AreaChart(document.getElementById('seniorityChart'));
                     chart.draw(dataTable, options);
                 });
 
-            // --- ГРАФІК 2: Кільцева діаграма (Ролі) ---
-            fetch('/api/charts/usersByRole')
+            /// --- ГРАФІК 2: Гістограма зарплат (ColumnChart) ---
+            fetch('/api/charts/vacanciesBySalary')
                 .then(response => response.json())
                 .then(data => {
                     const dataTable = new google.visualization.DataTable();
-                    dataTable.addColumn('string', 'Роль');
+                    dataTable.addColumn('string', 'Категорія');
                     dataTable.addColumn('number', 'Кількість');
+                    dataTable.addColumn({ type: 'string', role: 'style' });
 
-                    data.forEach(item => {
-                        dataTable.addRow([item.role, item.count]);
+                    const colors = ['#0dcaf0', '#198754', '#fd7e14', '#6c757d'];
+
+                    data.forEach((item, index) => {
+                        dataTable.addRow([item.category, item.count, colors[index]]);
                     });
 
                     const options = {
-                        pieHole: 0.4, // Робить діаграму кільцевою (бублик)
-                        colors: ['#ffc107', '#198754', '#0dcaf0', '#6c757d'], // Фірмові кольори Bootstrap
-                        chartArea: { width: '90%', height: '80%' },
-                        legend: { position: 'bottom' },
-                        animation: { startup: true, duration: 1000, easing: 'out' }
+                        legend: { position: 'none' },
+                        chartArea: { width: '85%', height: '70%' },
+                        animation: { startup: true, duration: 1000, easing: 'out' },
+                        bar: { groupWidth: '60%' }, 
+                        hAxis: {
+                            textStyle: { color: '#6c757d', fontSize: 11 },
+                            slantedText: true, slantedTextAngle: 15
+                        },
+                        vAxis: {
+                            textStyle: { color: '#6c757d' },
+                            gridlines: { color: '#eaecf4' },
+                            baselineColor: '#eaecf4'
+                        }
                     };
 
-                    const chart = new google.visualization.PieChart(document.getElementById('usersChart'));
+                    const chart = new google.visualization.ColumnChart(document.getElementById('salaryChart'));
                     chart.draw(dataTable, options);
                 });
         }

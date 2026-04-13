@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Threading;
+using System.Collections.Generic;
+using System;
 
 namespace WebApplication1.Controllers;
 
@@ -13,43 +14,80 @@ public class ChartsController : ControllerBase
 {
     private readonly AppDbContext _context;
 
-    private record VacanciesByCompanyItem(string CompanyName, int Count);
-    private record UsersByRoleItem(string Role, int Count);
-
     public ChartsController(AppDbContext context)
     {
         _context = context;
     }
 
-    // 1. Графік: Вакансії по компаніях (Використовуємо JOIN)
-    [HttpGet("vacanciesByCompany")]
-    public async Task<JsonResult> GetVacanciesByCompany(CancellationToken cancellationToken)
+    // 1. ГРАФІК: Розподіл вакансій за рівнем (Тепер рахує РЕАЛЬНІ дані з бази!)
+    [HttpGet("vacanciesBySeniority")]
+    public async Task<IActionResult> GetVacanciesBySeniority()
     {
-        // З'єднуємо таблиці явно, щоб не залежати від навігаційних властивостей
-        var responseItems = await (from v in _context.Vacancies
-                                   join c in _context.Companies on v.CompanyId equals c.Id
-                                   group v by c.Name into g
-                                   select new VacanciesByCompanyItem(g.Key, g.Count()))
-                                   .ToListAsync(cancellationToken);
+        var titles = await _context.Vacancies
+            .Where(v => v.Title != null)
+            .Select(v => v.Title.ToLower()) 
+            .ToListAsync();
 
-        return new JsonResult(responseItems);
+        int intern = 0, junior = 0, middle = 0, senior = 0, lead = 0, architect = 0;
+
+        foreach (var t in titles)
+        {
+            if (t.Contains("intern") || t.Contains("trainee")) intern++;
+            else if (t.Contains("junior")) junior++;
+            else if (t.Contains("senior")) senior++;
+            else if (t.Contains("lead") || t.Contains("manager") || t.Contains("head")) lead++;
+            else if (t.Contains("architect") || t.Contains("c-level") || t.Contains("expert")) architect++;
+            else middle++; 
+        }
+
+        var responseItems = new List<object>
+        {
+            new { title = "Intern/Trainee", count = intern },
+            new { title = "Junior", count = junior },
+            new { title = "Middle", count = middle },
+            new { title = "Senior", count = senior },
+            new { title = "Lead / Manager", count = lead },
+            new { title = "Architect / Top", count = architect }
+        };
+
+        return Ok(responseItems);
     }
-
-    // 2. Графік: Користувачі за ролями (Групуємо в пам'яті)
-    [HttpGet("usersByRole")]
-    public async Task<JsonResult> GetUsersByRole(CancellationToken cancellationToken)
+    
+    // 2. ГРАФІК: Зарплати (залишаємо, бо це дуже корисно)
+    [HttpGet("vacanciesBySalary")]
+    public async Task<IActionResult> GetVacanciesBySalary()
     {
-        // Витягуємо тільки колонку Role з бази даних, щоб не навантажувати мережу
-        var roles = await _context.Users
-                                  .Select(u => u.Role)
-                                  .ToListAsync(cancellationToken);
+        var vacancies = await _context.Vacancies.ToListAsync();
 
-        // Робимо групування вже на стороні C#, щоб уникнути помилок перекладу в SQL
-        var responseItems = roles
-            .GroupBy(role => string.IsNullOrEmpty(role) ? "Не вказано" : role)
-            .Select(g => new UsersByRoleItem(g.Key, g.Count()))
-            .ToList();
+        int beginner = 0;
+        int standard = 0;
+        int premium = 0;
+        int negotiable = 0;
 
-        return new JsonResult(responseItems);
+        foreach (var v in vacancies)
+        {
+            if (v.SalaryMin == null && v.SalaryMax == null)
+            {
+                negotiable++;
+            }
+            else
+            {
+                var salary = v.SalaryMax ?? v.SalaryMin ?? 0;
+                
+                if (salary < 800) beginner++;
+                else if (salary >= 800 && salary <= 2000) standard++;
+                else premium++;
+            }
+        }
+
+        var responseItems = new List<object>
+        {
+            new { category = "Стартові (до $800)", count = beginner },
+            new { category = "Мідл ($800 - $2000)", count = standard },
+            new { category = "Топові (понад $2000)", count = premium },
+            new { category = "Оплата договірна", count = negotiable }
+        };
+
+        return Ok(responseItems);
     }
 }
