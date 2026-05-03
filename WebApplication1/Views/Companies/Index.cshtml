@@ -1,11 +1,16 @@
 @model IEnumerable<WebApplication1.Models.Company>
 @{ ViewData["Title"] = "Компанії"; }
 
+@using WebApplication1.Extensions
+
 <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
     <h2 class="fw-bold m-0 text-dark"><i class="bi bi-buildings text-primary me-2"></i> Список компаній</h2>
-    <a asp-action="Create" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
-        <i class="bi bi-plus-circle me-1"></i> Додати компанію
-    </a>
+    @if (User.IsInRole(RoleNames.Admin))
+    {
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+            <i class="bi bi-plus-circle me-1"></i> Додати компанію
+        </a>
+    }
 </div>
 
 <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
@@ -29,12 +34,15 @@
                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-primary" title="Деталі">
                             <i class="bi bi-eye fs-5"></i>
                         </a>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-warning" title="Редагувати">
-                            <i class="bi bi-pencil fs-5"></i>
-                        </a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-danger" title="Видалити">
-                            <i class="bi bi-trash fs-5"></i>
-                        </a>
+                        @if (User.IsInRole(RoleNames.Admin))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-warning" title="Редагувати">
+                                <i class="bi bi-pencil fs-5"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-danger" title="Видалити">
+                                <i class="bi bi-trash fs-5"></i>
+                            </a>
+                        }
                     </div>
                 </td>
             </tr>

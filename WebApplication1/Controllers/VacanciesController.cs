@@ -34,6 +34,7 @@ public class VacanciesController : Controller
     }
 
 // 1. Відкриває сторінку створення
+    [Authorize(Roles = RoleNames.Admin)]
     public IActionResult Create()
     {
         ViewBag.CompanyId = new SelectList(_context.Companies, "Id", "Name");
@@ -50,6 +51,7 @@ public class VacanciesController : Controller
     // 2. Зберігає нову вакансію в базу
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = RoleNames.Admin)]
     public async Task<IActionResult> Create(Vacancy vacancy)
     {
         ModelState.Remove("Company");
@@ -82,6 +84,7 @@ public class VacanciesController : Controller
         return View(vacancy);
     }
 
+    [Authorize(Roles = RoleNames.Admin)]
     public async Task<IActionResult> Edit(Guid? id)
     {
         if (id is null) return NotFound();
@@ -100,6 +103,7 @@ public class VacanciesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = RoleNames.Admin)]
     public async Task<IActionResult> Edit(Guid id, Vacancy vacancy)
     {
         if (id != vacancy.Id) return NotFound();
@@ -179,6 +183,7 @@ public class VacanciesController : Controller
             FileDownloadName = $"vacancies_{DateTime.UtcNow:yyyy-MM-dd}.xlsx"
         };
     }
+    [Authorize(Roles = RoleNames.Admin)]
     public async Task<IActionResult> Delete(Guid? id)
     {
         if (id is null) return NotFound();
@@ -189,6 +194,7 @@ public class VacanciesController : Controller
 
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = RoleNames.Admin)]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
         var vacancy = await _context.Vacancies.FindAsync(id);

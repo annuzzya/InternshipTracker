@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using WebApplication1.Extensions
+<!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="utf-8" />
@@ -84,21 +85,24 @@
                     </ul>
                     <partial name="_LoginPartial" />
                     
-                    <ul class="navbar-nav ms-lg-4">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle btn btn-light rounded-pill px-4 fw-bold text-dark border shadow-sm d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-shield-lock-fill text-primary me-2"></i> Адмінка
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end admin-dropdown-menu rounded-4 p-2 mt-3">
-                                <li><span class="dropdown-header fw-bold text-uppercase small text-muted"><i class="bi bi-gear me-1"></i> Керування базою</span></li>
-                                <li><a class="dropdown-item mb-1" asp-controller="Users" asp-action="Index"><i class="bi bi-people me-2 text-primary"></i>Всі користувачі</a></li>
-                                <li><hr class="dropdown-divider mx-2 my-2"></li>
-                                <li><span class="dropdown-header fw-bold text-uppercase small text-muted"><i class="bi bi-lightning-charge me-1"></i> Швидкі дії</span></li>
-                                <li><a class="dropdown-item mb-1" asp-controller="Companies" asp-action="Create"><i class="bi bi-building-add me-2 text-success"></i>Додати компанію</a></li>
-                                <li><a class="dropdown-item" asp-controller="Vacancies" asp-action="Create"><i class="bi bi-briefcase-fill me-2 text-success"></i>Додати вакансію</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+                    @if (User.IsInRole(RoleNames.Admin))
+                    {
+                        <ul class="navbar-nav ms-lg-4">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle btn btn-light rounded-pill px-4 fw-bold text-dark border shadow-sm d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-shield-lock-fill text-primary me-2"></i> Адмінка
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end admin-dropdown-menu rounded-4 p-2 mt-3">
+                                    <li><span class="dropdown-header fw-bold text-uppercase small text-muted"><i class="bi bi-gear me-1"></i> Керування базою</span></li>
+                                    <li><a class="dropdown-item mb-1" asp-controller="Users" asp-action="Index"><i class="bi bi-people me-2 text-primary"></i>Всі користувачі</a></li>
+                                    <li><hr class="dropdown-divider mx-2 my-2"></li>
+                                    <li><span class="dropdown-header fw-bold text-uppercase small text-muted"><i class="bi bi-lightning-charge me-1"></i> Швидкі дії</span></li>
+                                    <li><a class="dropdown-item mb-1" asp-controller="Companies" asp-action="Create"><i class="bi bi-building-add me-2 text-success"></i>Додати компанію</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Vacancies" asp-action="Create"><i class="bi bi-briefcase-fill me-2 text-success"></i>Додати вакансію</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    }
                 </div>
             </div>
         </nav>
