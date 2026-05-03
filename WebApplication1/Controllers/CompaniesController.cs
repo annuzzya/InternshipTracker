@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
+using WebApplication1.Extensions;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers;
@@ -26,6 +28,7 @@ public class CompaniesController : Controller
         return View(await companies.ToListAsync());
     }
 
+    [Authorize(Roles = RoleNames.Admin)]
     public IActionResult Create()
     {
         return View();
@@ -33,6 +36,7 @@ public class CompaniesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = RoleNames.Admin)]
     public async Task<IActionResult> Create(Company company)
     {
         if (ModelState.IsValid)
@@ -52,6 +56,7 @@ public class CompaniesController : Controller
         return View(company);
     }
 
+    [Authorize(Roles = RoleNames.Admin)]
     public async Task<IActionResult> Edit(Guid? id)
     {
         if (id is null) return NotFound();
@@ -62,6 +67,7 @@ public class CompaniesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = RoleNames.Admin)]
     public async Task<IActionResult> Edit(Guid id, Company company)
     {
         if (id != company.Id) return NotFound();
@@ -81,6 +87,7 @@ public class CompaniesController : Controller
         return View(company);
     }
 
+    [Authorize(Roles = RoleNames.Admin)]
     public async Task<IActionResult> Delete(Guid? id)
     {
         if (id is null) return NotFound();
@@ -91,6 +98,7 @@ public class CompaniesController : Controller
 
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = RoleNames.Admin)]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
         var company = await _context.Companies.FindAsync(id);

@@ -32,9 +32,12 @@
         <a asp-action="Export" class="btn btn-outline-success rounded-pill px-4 py-2 fw-bold shadow-sm text-nowrap">
             <i class="bi bi-download me-1"></i> Експорт Excel
         </a>
-        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm text-nowrap">
-            <i class="bi bi-plus-circle me-1"></i> Додати вакансію
-        </a>
+        @if (User.IsInRole(RoleNames.Admin))
+        {
+            <a asp-action="Create" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm text-nowrap">
+                <i class="bi bi-plus-circle me-1"></i> Додати вакансію
+            </a>
+        }
     </div>
 </div>
 
@@ -67,12 +70,15 @@
                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-primary" title="Деталі">
                             <i class="bi bi-eye fs-5"></i>
                         </a>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-warning" title="Редагувати">
-                            <i class="bi bi-pencil fs-5"></i>
-                        </a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-danger" title="Видалити">
-                            <i class="bi bi-trash fs-5"></i>
-                        </a>
+                        @if (User.IsInRole(RoleNames.Admin))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-warning" title="Редагувати">
+                                <i class="bi bi-pencil fs-5"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-danger" title="Видалити">
+                                <i class="bi bi-trash fs-5"></i>
+                            </a>
+                        }
                     </div>
                 </td>
             </tr>
