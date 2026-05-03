@@ -23,4 +23,8 @@ public class Vacancy
     public string? Currency { get; set; }
     
     public string? Link { get; set; }
+
+    public Company? Company { get; set; }
+
+    public User? Author { get; set; }
 }

@@ -4,16 +4,19 @@ using WebApplication1.Data;
 using WebApplication1.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using WebApplication1.Infrastructure.Services;
 
 namespace WebApplication1.Controllers;
 
 public class VacanciesController : Controller
 {
     private readonly AppDbContext _context;
+    private readonly IDataPortServiceFactory<Vacancy> _vacancyDataPortServiceFactory;
 
-    public VacanciesController(AppDbContext context)
+    public VacanciesController(AppDbContext context, IDataPortServiceFactory<Vacancy> vacancyDataPortServiceFactory)
     {
         _context = context;
+        _vacancyDataPortServiceFactory = vacancyDataPortServiceFactory;
     }
 
     public async Task<IActionResult> Index(string searchString)
@@ -133,6 +136,45 @@ public class VacanciesController : Controller
         return View(vacancy);
     }
 
+
+    [HttpGet]
+    public IActionResult Import()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Import(IFormFile vacanciesFile, CancellationToken cancellationToken)
+    {
+        if (vacanciesFile is null || vacanciesFile.Length == 0)
+        {
+            ModelState.AddModelError(string.Empty, "Оберіть Excel-файл для імпорту.");
+            return View();
+        }
+
+        var importService = _vacancyDataPortServiceFactory.GetImportService(vacanciesFile.ContentType);
+        await using var stream = vacanciesFile.OpenReadStream();
+        await importService.ImportFromStreamAsync(stream, cancellationToken);
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Export([FromQuery] string contentType = VacancyDataPortServiceFactory.ExcelContentType, CancellationToken cancellationToken = default)
+    {
+        var exportService = _vacancyDataPortServiceFactory.GetExportService(contentType);
+        var memoryStream = new MemoryStream();
+
+        await exportService.WriteToAsync(memoryStream, cancellationToken);
+        await memoryStream.FlushAsync(cancellationToken);
+        memoryStream.Position = 0;
+
+        return new FileStreamResult(memoryStream, contentType)
+        {
+            FileDownloadName = $"vacancies_{DateTime.UtcNow:yyyy-MM-dd}.xlsx"
+        };
+    }
     public async Task<IActionResult> Delete(Guid? id)
     {
         if (id is null) return NotFound();
