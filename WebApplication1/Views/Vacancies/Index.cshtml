@@ -1,3 +1,8 @@
+@using WebApplication1.Extensions
+@using WebApplication1.Data.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
 @model IEnumerable<WebApplication1.Models.Vacancy>
 @{ ViewData["Title"] = "Вакансії"; }
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3 border-bottom gap-3">
@@ -14,9 +19,16 @@
             </div>
         </form>
         
-        <a asp-action="Import" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-bold shadow-sm text-nowrap">
-            <i class="bi bi-upload me-1"></i> Імпорт Excel
-        </a>
+        @if (SignInManager.IsSignedIn(User))
+        {
+            var applicationUser = await UserManager.GetUserAsync(User);
+            if (applicationUser is not null && await UserManager.IsInRoleAsync(applicationUser, RoleNames.Admin))
+            {
+                <a asp-action="Import" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-bold shadow-sm text-nowrap">
+                    <i class="bi bi-upload me-1"></i> Імпорт Excel
+                </a>
+            }
+        }
         <a asp-action="Export" class="btn btn-outline-success rounded-pill px-4 py-2 fw-bold shadow-sm text-nowrap">
             <i class="bi bi-download me-1"></i> Експорт Excel
         </a>
