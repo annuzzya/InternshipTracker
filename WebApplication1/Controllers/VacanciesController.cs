@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
@@ -5,6 +6,7 @@ using WebApplication1.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WebApplication1.Infrastructure.Services;
+using WebApplication1.Extensions;
 
 namespace WebApplication1.Controllers;
 
@@ -138,6 +140,7 @@ public class VacanciesController : Controller
 
 
     [HttpGet]
+    [Authorize(Roles = RoleNames.Admin)]
     public IActionResult Import()
     {
         return View();
@@ -145,6 +148,7 @@ public class VacanciesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = RoleNames.Admin)]
     public async Task<IActionResult> Import(IFormFile vacanciesFile, CancellationToken cancellationToken)
     {
         if (vacanciesFile is null || vacanciesFile.Length == 0)
