@@ -1,57 +1,39 @@
 @model IEnumerable<WebApplication1.Models.Company>
+@using WebApplication1.Extensions
 @{ ViewData["Title"] = "Компанії"; }
 
-@using WebApplication1.Extensions
-
-<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
-    <h2 class="fw-bold m-0 text-dark"><i class="bi bi-buildings text-primary me-2"></i> Список компаній</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">Компанії</h2>
     @if (User.IsInRole(RoleNames.Admin))
     {
-        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
-            <i class="bi bi-plus-circle me-1"></i> Додати компанію
-        </a>
+        <a asp-action="Create" class="btn btn-primary btn-sm">Додати компанію</a>
     }
 </div>
 
-<div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-    <table class="table table-hover mb-0 align-middle">
-        <thead class="table-light">
-            <tr>
-                <th class="ps-4">Назва</th>
-                <th>Сайт</th>
-                <th>Локація</th>
-                <th class="text-end pe-4">Дії</th>
-            </tr>
-        </thead>
-        <tbody>
-    @foreach (var item in Model) {
-            <tr>
-                <td class="fw-bold ps-4">@item.Name</td>
-                <td><a href="@item.Website" target="_blank" class="text-decoration-none text-primary"><i class="bi bi-link-45deg"></i> @item.Website</a></td>
-                <td><span class="text-muted"><i class="bi bi-geo-alt-fill text-danger opacity-75 me-1"></i> @item.Location</span></td>
-                <td class="align-middle pe-4">
-                    <div class="d-flex gap-2 justify-content-end">
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-primary" title="Деталі">
-                            <i class="bi bi-eye fs-5"></i>
-                        </a>
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover table-borderless align-middle mb-0">
+            <thead class="table-light">
+                <tr><th>Назва</th><th>Сайт</th><th>Локація</th><th class="text-end">Дії</th></tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="fw-semibold">@item.Name</td>
+                    <td><a href="@item.Website" target="_blank">@item.Website</a></td>
+                    <td>@item.Location</td>
+                    <td class="text-end">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Details</a>
                         @if (User.IsInRole(RoleNames.Admin))
                         {
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-warning" title="Редагувати">
-                                <i class="bi bi-pencil fs-5"></i>
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-danger" title="Видалити">
-                                <i class="bi bi-trash fs-5"></i>
-                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
                         }
-                    </div>
-                </td>
-            </tr>
-    }
-        </tbody>
-    </table>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
 </div>
-
-<style>
-    .hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-    .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important; background-color: #fff !important; }
-</style>

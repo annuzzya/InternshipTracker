@@ -1,89 +1,16 @@
 @model WebApplication1.Models.Vacancy
-@{ ViewData["Title"] = "Редагування: " + Model.Title; }
-
-<div class="container-fluid px-4 mt-4">
-    <form asp-action="Edit">
-        <input type="hidden" asp-for="Id" />
-        <div class="row g-4">
-            <div class="col-lg-8">
-                <div class="card shadow-sm border-0 rounded-4">
-                    <div class="card-body p-4 p-md-5">
-                        <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
-                            <div class="bg-warning-subtle text-warning rounded-3 p-3">
-                                <i class="bi bi-pencil-square fs-2"></i>
-                            </div>
-                            <h2 class="fw-bold m-0">Редагувати вакансію</h2>
-                        </div>
-
-                        <div class="form-group mb-4">
-                            <label class="form-label fw-bold text-muted small text-uppercase">Назва вакансії</label>
-                            <input asp-for="Title" class="form-control form-control-lg bg-light border-0 shadow-sm" placeholder="Наприклад: Junior .NET Developer" required />
-                        </div>
-
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold text-muted small text-uppercase">Мінімальна ЗП</label>
-                                <div class="input-group input-group-lg">
-                                    <span class="input-group-text bg-light border-0 text-success"><i class="bi bi-cash"></i></span>
-                                    <input asp-for="SalaryMin" class="form-control bg-light border-0 shadow-sm" type="number" />
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold text-muted small text-uppercase">Максимальна ЗП</label>
-                                <div class="input-group input-group-lg">
-                                    <span class="input-group-text bg-light border-0 text-success"><i class="bi bi-cash-stack"></i></span>
-                                    <input asp-for="SalaryMax" class="form-control bg-light border-0 shadow-sm" type="number" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label fw-bold text-muted small text-uppercase">Посилання на повний опис</label>
-                            <div class="input-group input-group-lg">
-                                <span class="input-group-text bg-light border-0 text-primary"><i class="bi bi-link-45deg"></i></span>
-                                <input asp-for="Link" class="form-control bg-light border-0 shadow-sm" placeholder="https://djinni.co/..." />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="card shadow-sm border-0 rounded-4 mb-4">
-                    <div class="card-body p-4">
-                        <h5 class="fw-bold mb-4 border-bottom pb-2">Параметри публікації</h5>
-                        
-                        <div class="mb-3">
-                            <label class="form-label fw-bold text-muted small text-uppercase">Статус</label>
-                            <select asp-for="StatusId" class="form-select bg-light border-0" asp-items="ViewBag.StatusId"></select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-bold text-muted small text-uppercase">Валюта</label>
-                            <input asp-for="Currency" class="form-control bg-light border-0" placeholder="USD" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-bold text-muted small text-uppercase">Компанія</label>
-                            <select asp-for="CompanyId" class="form-select bg-light border-0" asp-items="ViewBag.CompanyId"></select>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-bold text-muted small text-uppercase">Автор публікації</label>
-                            <select asp-for="AuthorId" class="form-select bg-light border-0" asp-items="ViewBag.AuthorId"></select>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-warning btn-lg rounded-pill fw-bold text-white shadow-sm hover-lift">
-                                <i class="bi bi-check2-circle me-2"></i>Зберегти зміни
-                            </button>
-                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg rounded-pill fw-bold mt-2">
-                                Скасувати
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
+@{ ViewData["Title"] = "Редагувати вакансію"; }
+<div class="row justify-content-center"><div class="col-md-8"><div class="card shadow-sm"><div class="card-body p-4">
+<h2 class="h4 mb-4">Редагувати вакансію</h2>
+<form asp-action="Edit">
+<input type="hidden" asp-for="Id" />
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<div class="mb-3"><label asp-for="Title" class="form-label"></label><input asp-for="Title" class="form-control" /><span asp-validation-for="Title" class="text-danger"></span></div>
+<div class="row"><div class="col-md-6 mb-3"><label asp-for="SalaryMin" class="form-label"></label><input asp-for="SalaryMin" class="form-control" /><span asp-validation-for="SalaryMin" class="text-danger"></span></div><div class="col-md-6 mb-3"><label asp-for="SalaryMax" class="form-label"></label><input asp-for="SalaryMax" class="form-control" /><span asp-validation-for="SalaryMax" class="text-danger"></span></div></div>
+<div class="mb-3"><label asp-for="Currency" class="form-label"></label><input asp-for="Currency" class="form-control" /><span asp-validation-for="Currency" class="text-danger"></span></div>
+<div class="mb-3"><label asp-for="Link" class="form-label"></label><input asp-for="Link" class="form-control" /><span asp-validation-for="Link" class="text-danger"></span></div>
+<div class="mb-3"><label asp-for="StatusId" class="form-label"></label><select asp-for="StatusId" asp-items="ViewBag.StatusId" class="form-select"></select></div>
+<div class="mb-3"><label asp-for="CompanyId" class="form-label"></label><select asp-for="CompanyId" asp-items="ViewBag.CompanyId" class="form-select"></select></div>
+<div class="mb-3"><label asp-for="AuthorId" class="form-label"></label><select asp-for="AuthorId" asp-items="ViewBag.AuthorId" class="form-select"></select></div>
+<button type="submit" class="btn btn-primary w-100">Save</button>
+</form></div></div></div></div>

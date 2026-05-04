@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using WebApplication1.Extensions;
 
 namespace WebApplication1.Controllers;
 
+[Authorize(Roles = RoleNames.Admin)]
 public class UsersController : Controller
 {
     private readonly AppDbContext _context;

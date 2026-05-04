@@ -1,35 +1,29 @@
 @model WebApplication1.Models.Company
 @{ ViewData["Title"] = "Додати компанію"; }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-6 col-lg-5">
-        <div class="card shadow-sm border-0 rounded-4">
-            <div class="card-body p-4 p-md-5">
-                <div class="text-center mb-4">
-                    <div class="bg-success-subtle text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                        <i class="bi bi-building-add fs-3"></i>
-                    </div>
-                    <h3 class="fw-bold">Додати нову компанію</h3>
-                </div>
-                
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="h4 mb-4">Додати компанію</h2>
                 <form asp-action="Create">
-                    <div class="form-group mb-3">
-                        <label class="control-label fw-bold text-muted small mb-1">Назва компанії</label>
-                        <input asp-for="Name" class="form-control form-control-lg bg-light border-0" required placeholder="Наприклад: Genesis" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
-                    <div class="form-group mb-3">
-                        <label class="control-label fw-bold text-muted small mb-1">Сайт</label>
-                        <input asp-for="Website" class="form-control form-control-lg bg-light border-0" placeholder="https://..." />
+                    <div class="mb-3">
+                        <label asp-for="Website" class="form-label"></label>
+                        <input asp-for="Website" class="form-control" />
+                        <span asp-validation-for="Website" class="text-danger"></span>
                     </div>
-                    <div class="form-group mb-4">
-                        <label class="control-label fw-bold text-muted small mb-1">Локація</label>
-                        <input asp-for="Location" class="form-control form-control-lg bg-light border-0" placeholder="Київ, Україна" />
+                    <div class="mb-3">
+                        <label asp-for="Location" class="form-label"></label>
+                        <input asp-for="Location" class="form-control" />
+                        <span asp-validation-for="Location" class="text-danger"></span>
                     </div>
-                    
-                    <div class="d-flex gap-3 mt-4">
-                        <button type="submit" class="btn btn-success btn-lg w-50 fw-bold shadow-sm"><i class="bi bi-check-lg me-1"></i> Створити</button>
-                        <a asp-action="Index" class="btn btn-light btn-lg w-50 fw-bold border">Скасувати</a>
-                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Save</button>
                 </form>
             </div>
         </div>
