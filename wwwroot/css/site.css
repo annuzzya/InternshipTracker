@@ -1,0 +1,48 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus, .form-select:focus {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
+}
+
+html, body {
+  min-height: 100%;
+}
+
+body.app-shell {
+  background-color: #f8f9fc;
+  display: flex;
+  flex-direction: column;
+}
+
+.table thead th {
+  white-space: nowrap;
+}
+
+main .card {
+  border-radius: 0.9rem;
+}
+
+/* Identity UI polish without scaffolding override */
+#account .row, .account-page .row {
+  justify-content: center;
+}
+
+#account .col-md-4, .account-page .col-md-4 {
+  max-width: 460px;
+}
+
+#account form, .account-page form {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 0.5rem 1.2rem rgba(31, 45, 61, .08);
+}

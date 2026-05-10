@@ -1,0 +1,49 @@
+@model WebApplication1.Models.Vacancy
+@{ ViewData["Title"] = "Видалити вакансію"; }
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow border-0 rounded-4 overflow-hidden">
+            <div class="card-header bg-danger text-white p-4 text-center">
+                <div class="bg-white bg-opacity-25 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;">
+                    <i class="bi bi-trash3-fill fs-2"></i>
+                </div>
+                <h4 class="fw-bold mb-0">Підтвердження видалення</h4>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-muted text-center mb-4">Ви збираєтесь видалити наступну вакансію. Цю дію не можна скасувати.</p>
+
+                <div class="bg-light rounded-3 p-3 mb-4">
+                    <div class="mb-2">
+                        <span class="text-muted small fw-bold text-uppercase">Назва</span>
+                        <p class="fw-bold mb-0 text-dark">@Model.Title</p>
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-muted small fw-bold text-uppercase">Зарплата</span>
+                        <p class="mb-0">@(Model.SalaryMin != null ? $"{Model.SalaryMin} – {Model.SalaryMax} {Model.Currency}" : "Не вказано")</p>
+                    </div>
+                    <div>
+                        <span class="text-muted small fw-bold text-uppercase">Статус</span>
+                        <p class="mb-0">
+                            @if (Model.StatusId == 1) { <span class="badge bg-success rounded-pill">Відкрита</span> }
+                            else if (Model.StatusId == 2) { <span class="badge bg-secondary rounded-pill">Закрита</span> }
+                            else { <span class="badge bg-warning text-dark rounded-pill">Чернетка</span> }
+                        </p>
+                    </div>
+                </div>
+
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger btn-lg rounded-pill fw-bold shadow-sm">
+                            <i class="bi bi-trash3 me-2"></i>Так, видалити
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-lg rounded-pill fw-bold">
+                            <i class="bi bi-arrow-left me-2"></i>Скасувати
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

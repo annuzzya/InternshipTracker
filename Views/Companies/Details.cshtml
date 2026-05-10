@@ -1,0 +1,110 @@
+@model WebApplication1.Models.Company
+@{ ViewData["Title"] = "Компанія: " + Model.Name; }
+
+<div class="container-fluid px-4 mt-4">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4 p-md-5">
+                    <div class="d-flex align-items-center gap-4 mb-5 pb-4 border-bottom">
+                        <div class="bg-primary text-white rounded-4 d-flex align-items-center justify-content-center shadow-sm"
+                             style="width:100px;height:100px;min-width:100px;">
+                            <i class="bi bi-building fs-1"></i>
+                        </div>
+                        <div>
+                            <h1 class="fw-bold mb-2">@Model.Name</h1>
+                            <div class="d-flex flex-wrap gap-2">
+                                @if (!string.IsNullOrEmpty(Model.Location))
+                                {
+                                    <span class="badge bg-light text-dark border rounded-pill px-3 py-2">
+                                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>@Model.Location
+                                    </span>
+                                }
+                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2">
+                                    <i class="bi bi-check-circle-fill me-1"></i>Перевірена компанія
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <h5 class="fw-bold mb-3">Про компанію</h5>
+                            <p class="text-muted fs-5 lh-base">
+                                Це офіційна сторінка компанії <strong>@Model.Name</strong>.
+                                Тут ви можете знайти контактну інформацію та актуальні дані про локацію офісу.
+                            </p>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.Website))
+                        {
+                            <div class="col-md-6 mt-2">
+                                <div class="p-3 bg-light rounded-3 border-start border-primary border-4">
+                                    <label class="text-muted small fw-bold text-uppercase d-block mb-1">Офіційний сайт</label>
+                                    <a href="@Model.Website" target="_blank" rel="noopener noreferrer"
+                                       class="fs-5 fw-bold text-decoration-none text-primary">
+                                        <i class="bi bi-box-arrow-up-right me-2"></i>Перейти на сайт
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Контакти та системні дані</h5>
+
+                    <div class="mb-3">
+                        <label class="text-muted small fw-bold text-uppercase d-block mb-1">Локація</label>
+                        <p class="fw-medium mb-0">
+                            <i class="bi bi-map me-2 text-danger"></i>
+                            @(string.IsNullOrEmpty(Model.Location) ? "Не вказано" : Model.Location)
+                        </p>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Website))
+                    {
+                        <div class="mb-3">
+                            <label class="text-muted small fw-bold text-uppercase d-block mb-1">Пряме посилання</label>
+                            <p class="small text-primary text-break mb-0">@Model.Website</p>
+                        </div>
+                    }
+
+                    <div class="mb-4 p-3 bg-light rounded-3">
+                        <label class="text-muted small fw-bold text-uppercase d-block mb-1">Системний GUID</label>
+                        <code class="small text-break">@Model.Id</code>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        @if (User.IsInRole(RoleNames.Admin))
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.Id"
+                               class="btn btn-warning btn-lg rounded-pill fw-bold text-white shadow-sm hover-lift">
+                                <i class="bi bi-pencil-square me-2"></i>Редагувати дані
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@Model.Id"
+                               class="btn btn-outline-danger btn-lg rounded-pill fw-bold">
+                                <i class="bi bi-trash3 me-2"></i>Видалити
+                            </a>
+                        }
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-lg rounded-pill fw-bold mt-1">
+                            <i class="bi bi-arrow-left me-2"></i>До списку компаній
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card text-white border-0 rounded-4 shadow-sm" style="background:var(--brand, #4f46e5)">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-info-circle fs-2 mb-3"></i>
+                    <h6>Потрібна допомога?</h6>
+                    <p class="small opacity-75 mb-0">Якщо дані компанії застаріли, зверніться до адміністратора системи.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

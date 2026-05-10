@@ -1,0 +1,94 @@
+@model WebApplication1.Models.Vacancy
+@{ ViewData["Title"] = "Вакансія: " + Model.Title; }
+
+<div class="container-fluid px-4 mt-4">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4 p-md-5">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="bg-primary-subtle text-primary rounded-3 p-3">
+                            <i class="bi bi-briefcase-fill fs-2"></i>
+                        </div>
+                        <div>
+                            <h1 class="fw-bold mb-1">@Model.Title</h1>
+                            <span class="text-muted small">ID: @Model.Id</span>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="p-4 rounded-4 border bg-light h-100">
+                                <label class="text-muted small fw-bold text-uppercase d-block mb-2">Бюджет / Зарплата</label>
+                                <h3 class="fw-bolder text-success mb-0">
+                                    <i class="bi bi-cash-stack me-2"></i>
+                                    @(Model.SalaryMin != null ? $"{Model.SalaryMin} – {Model.SalaryMax} {Model.Currency}" : "Оплата договірна")
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-4 rounded-4 border bg-light h-100">
+                                <label class="text-muted small fw-bold text-uppercase d-block mb-2">Поточний статус</label>
+                                @if (Model.StatusId == 1) {
+                                    <span class="badge bg-success rounded-pill px-4 py-2 fs-6 shadow-sm"><i class="bi bi-check-circle-fill me-2"></i>Активна / Відкрита</span>
+                                } else if (Model.StatusId == 2) {
+                                    <span class="badge bg-secondary rounded-pill px-4 py-2 fs-6 shadow-sm"><i class="bi bi-x-circle-fill me-2"></i>Закрита</span>
+                                } else {
+                                    <span class="badge bg-warning text-dark rounded-pill px-4 py-2 fs-6 shadow-sm"><i class="bi bi-pencil-fill me-2"></i>Чернетка</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Link))
+                    {
+                        <div class="border-top pt-4">
+                            <h5 class="fw-bold mb-3">Посилання на вакансію</h5>
+                            @{
+                                bool isValidUri = Uri.TryCreate(Model.Link, UriKind.Absolute, out var parsedUri);
+                                string displayHost = isValidUri ? parsedUri!.Host : Model.Link;
+                            }
+                            <a href="@Model.Link" target="_blank" rel="noopener noreferrer"
+                               class="btn btn-outline-primary rounded-pill px-4 fw-bold">
+                                <i class="bi bi-box-arrow-up-right me-2"></i>Переглянути на @displayHost
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="border-top pt-4 text-muted">
+                            <i class="bi bi-link-45deg me-1"></i> Посилання не вказано
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4 border-bottom pb-2">Прив'язка</h5>
+                    <div class="mb-4 text-center p-3 bg-light rounded-4">
+                        <i class="bi bi-building fs-1 text-muted opacity-50 d-block mb-2"></i>
+                        <label class="text-muted small fw-bold text-uppercase d-block">Компанія ID</label>
+                        <code class="text-primary fw-bold small text-break">@Model.CompanyId</code>
+                    </div>
+                    <div class="d-grid gap-2">
+                        @if (User.IsInRole(RoleNames.Admin))
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-lg rounded-pill fw-bold text-white shadow-sm">
+                                <i class="bi bi-pencil me-2"></i>Редагувати
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger btn-lg rounded-pill fw-bold">
+                                <i class="bi bi-trash3 me-2"></i>Видалити
+                            </a>
+                        }
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-lg rounded-pill fw-bold mt-1">
+                            <i class="bi bi-arrow-left me-2"></i>До списку
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

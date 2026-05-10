@@ -1,0 +1,81 @@
+@model IEnumerable<WebApplication1.Models.User>
+@{ ViewData["Title"] = "Користувачі"; }
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3 border-bottom gap-3">
+    <h2 class="fw-bold m-0 text-dark"><i class="bi bi-people text-primary me-2"></i> База користувачів</h2>
+
+    <div class="d-flex flex-column flex-sm-row gap-3 align-items-sm-center">
+        <form asp-action="Index" method="get" class="m-0">
+            <div class="input-group input-group-sm shadow-sm rounded-pill overflow-hidden border">
+                <input type="text" name="searchString" value="@ViewData["CurrentFilter"]"
+                       class="form-control border-0 bg-light px-3 py-2" placeholder="Пошук за ПІБ..."
+                       style="min-width:200px;">
+                <button type="submit" class="btn btn-light border-0 bg-light px-3"><i class="bi bi-search text-muted"></i></button>
+                @if (ViewData["CurrentFilter"] != null) {
+                    <a asp-action="Index" class="btn btn-light border-0 bg-light px-3 text-danger" title="Скинути"><i class="bi bi-x-lg"></i></a>
+                }
+            </div>
+        </form>
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm text-nowrap">
+            <i class="bi bi-person-plus me-1"></i> Додати користувача
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+    <table class="table table-hover mb-0 align-middle">
+        <thead class="table-light">
+            <tr>
+                <th class="ps-4">ПІБ</th>
+                <th>Email</th>
+                <th>Роль</th>
+                <th class="text-end pe-4">Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td class="fw-bold ps-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center shadow-sm flex-shrink-0"
+                             style="width:32px;height:32px;font-size:14px;">
+                            @item.FullName.Substring(0, 1).ToUpper()
+                        </div>
+                        @item.FullName
+                    </div>
+                </td>
+                <td class="text-muted">@item.Email</td>
+                <td>
+                    <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill px-3">
+                        @(string.IsNullOrEmpty(item.Role) ? "Не вказано" : item.Role)
+                    </span>
+                </td>
+                <td class="align-middle pe-4">
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a asp-action="Details" asp-route-id="@item.Id"
+                           class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-primary" title="Деталі">
+                            <i class="bi bi-eye fs-5"></i>
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@item.Id"
+                           class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-warning" title="Редагувати">
+                            <i class="bi bi-pencil fs-5"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id"
+                           class="btn btn-sm btn-light border rounded-3 px-2 py-1 shadow-sm hover-lift text-danger" title="Видалити">
+                            <i class="bi bi-trash fs-5"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+
+    @if (!Model.Any()) {
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-person-x fs-1 d-block mb-3 opacity-50"></i>
+            <h5>База користувачів порожня</h5>
+            <p class="small">Додайте першого користувача за допомогою кнопки вгорі</p>
+        </div>
+    }
+</div>

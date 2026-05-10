@@ -1,0 +1,68 @@
+@model WebApplication1.Models.User
+@{ ViewData["Title"] = "Редагування профілю"; }
+
+<div class="container-fluid px-4 mt-4">
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="Id" />
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 rounded-4 text-center p-4 h-100">
+                    <div class="card-body">
+                        <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-4 shadow" style="width: 120px; height: 120px; font-size: 50px; font-weight: 800;">
+                            @Model.FullName.Substring(0, 1).ToUpper()
+                        </div>
+                        <h3 class="fw-bold mb-1">@Model.FullName</h3>
+                        <p class="text-muted mb-4 small">Редагування облікового запису</p>
+                        
+                        <div class="bg-light rounded-4 p-3 text-start mb-4">
+                            <label class="form-label fw-bold text-muted small text-uppercase mb-1">Системна роль</label>
+                            <select asp-for="Role" class="form-select border-0 shadow-sm">
+                                <option value="Student">Student</option>
+                                <option value="Recruiter">Recruiter</option>
+                                <option value="Mentor">Mentor</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning btn-lg rounded-pill fw-bold text-white shadow-sm hover-lift">
+                                <i class="bi bi-check2-all me-2"></i>Зберегти профіль
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary rounded-pill fw-bold mt-2">Скасувати</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 rounded-4 h-100">
+                    <div class="card-body p-4 p-md-5">
+                        <h4 class="fw-bold mb-4 border-bottom pb-2">Особисті дані</h4>
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold text-muted small text-uppercase">Повне ім'я (ПІБ)</label>
+                                <input asp-for="FullName" class="form-control form-control-lg bg-light border-0 shadow-sm" required />
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold text-muted small text-uppercase">Електронна пошта</label>
+                                <input asp-for="Email" class="form-control form-control-lg bg-light border-0 shadow-sm" type="email" required />
+                            </div>
+                        </div>
+
+                        <h4 class="fw-bold mb-4 border-bottom pb-2 mt-2">Зв'язки</h4>
+                        <div class="row g-4">
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold text-muted small text-uppercase">Прив'язка до компанії</label>
+                                <select asp-for="CompanyId" class="form-select form-select-lg bg-light border-0 shadow-sm" asp-items="ViewBag.CompanyId">
+                                    <option value="">Немає (фрілансер/студент)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
